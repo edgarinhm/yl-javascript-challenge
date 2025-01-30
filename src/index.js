@@ -1,9 +1,9 @@
 class News {
   newsArray = [];
-  subscribe(topiName, callback) {
+  subscribe(topicName, callback) {
     this.newsArray = [
       ...this.newsArray,
-      { topiName, callback, removed: false, runOnce: false },
+      { topicName, callback, removed: false, runOnce: false },
     ];
     const lastItem = this.newsArray.length - 1;
     return {
@@ -12,21 +12,24 @@ class News {
       },
     };
   }
-  subscribeOnce(topiName, callback) {
+  subscribeOnce(topicName, callback) {
     this.newsArray = [
       ...this.newsArray,
-      { topiName, callback, removed: false, runOnce: true },
+      { topicName, callback, removed: false, runOnce: true },
     ];
   }
   publish(topicName, topicDescription) {
-    const filterNews = this.newsArray.filter((news) => !news.removed);
-    const lastNew = filterNews[filterNews.length - 1];
+    const filterNews = this.newsArray.filter(
+      (news) => news.topicName === topicName && !news.removed
+    );
 
-    lastNew.callback(topicDescription);
+    filterNews.forEach((news) => {
+      news.callback(topicDescription);
 
-    if (lastNew.runOnce) {
-      lastNew.removed = true;
-    }
+      if (news.runOnce) {
+        news.removed = true;
+      }
+    });
   }
   publishAll(topicDescription) {
     this.newsArray
